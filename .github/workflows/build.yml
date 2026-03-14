@@ -91,6 +91,18 @@ jobs:
       shell: bash
       run: |
         cd build && ninja
+    - name: Stage Windows install
+      if: ${{ runner.os == 'Windows' && matrix.ui == 'gui' && matrix.scripting == 'lua' && matrix.build_type == 'RelWithDebInfo' }}
+      shell: bash
+      run: |
+        cmake --install build --prefix dist --config ${{ matrix.build_type }}
+    - name: Upload Windows artifact
+      if: ${{ runner.os == 'Windows' && matrix.ui == 'gui' && matrix.scripting == 'lua' && matrix.build_type == 'RelWithDebInfo' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: aseprite-windows-${{ matrix.build_type }}-${{ matrix.ui }}-${{ matrix.scripting }}
+        path: dist
+        if-no-files-found: error
     - name: Running C++ Tests
       shell: bash
       run: |
